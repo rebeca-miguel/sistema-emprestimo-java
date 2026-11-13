@@ -1,0 +1,91 @@
+
+O que é uma API REST? Pra que ela serve?
+RESPOSTA: Uma API REST é uma forma de comunicação entre sistemas por meio de requisições HTTP.
+
+Permite que aplicações diferentes troquem informações,
+como cadastrar, consultar, atualizar e excluirr dados.
+
+Qual a diferença entre GET, POST, PUT e DELETE? Dê um exemplo de cada.
+
+RESPOSTA: A diferença entre elas é que são métodos HTTP utilizados para realizar diferentes operações em uma API.
+Sendo assim: O GET tem a função de consultar dados, exemplo: Listar Recados.
+
+O POST tem a função de cadastrar dados, exemplo: Cadastrar recados.
+O PUT tem a dunção de altualizar dados, exemplo: alterar um recado.
+O DELETE tem a função de excluir dados, exemplo: excluir um recado.
+
+O que significam os status 200, 201, 400, 404 e 409?
+RESPOSTA: São códigos HTTP que indicam o resultado de uma requisição.
+Onde: 200 significa - ok
+201 - Created, ou seja, cria o registro.
+400 Bad Rquest - dados enviados incorretamente.
+404 Not Found - Recurso não encontrado.
+409 Conflict - Conflito com algum dado exixtente.
+
+O que é JSON?
+RESPOSTA: O JSON é um formato leve utilizado para enviar e receber informações entre sistmas.
+
+Qual a função de cada camada: Controller, Service e Repository?
+RESPOSTA: Cada camada possui uma resposnabilidade especifica, sendo:
+Controller serve para receber as requisições HTTP e retornar as respostas.
+Service serve para executar as regras de negócio da aplicação.
+Repository serve para acessar o banco de dados, salvar, consultar, atualizar e excluir registros.
+
+O que a anotação @Entity faz?
+RESPOSTA: A anotação @Entity informa ao JPA que uma classe representa uma entidade que será mapeada para uma tabela no banco de dados.
+
+Por que o repository é uma interface, e quem escreve o código dele?
+RESPOSTA: O repoitory é uma interface que não precisamos implementar manualmente os métodos bbásicos de acesso ao banco.
+O JPA fornece automaticamente a impelementação dos métodos, como:
+save(): salvar.
+findAll(): listar todos.
+findById(): buscar por ID.
+deleteById(): excluir por ID.
+
+O que é validar? O que o @Valid faz?
+RESPOSTA: Validar significa verificar se os dados enviados atendam às regras estabelecidas pela aplicação.
+A anotação @Valid ativa a validação dos campos de um objeto, considerando as restrições declaradas nele.
+
+Como um JSON vira uma linha no banco de dados? Descreva o caminho, do Postman até a tabela.
+RESPOSTA: O processo de envio de dados ao banco acontece da seguinte maneira:
+-O Postman envia a requisição POST com os dados em JSON;
+-O Controller recebe a requisição.
+-O @RequesteBody trnsforma o JSON em um objeto java.
+-O Service executa as regras de negócio.
+-O Repository utiliza o método save() para persistir o objeto.
+-O JPA/Hibernate transforma os dados em um comando SQL.
+-O banco executa o INSERT e armazena o registro na tabela.
+
+E o caminho contrário: num GET /equipamentos/1, como uma linha do banco vira o JSON que aparece no Postman?
+RESPOSTA: O caminho inverso é:
+-O POstma envia uma requisição GET.
+-O Controller recebe a solicitação.
+-O Service solicita ao Repository a busca pelo ID 1.
+-O Repository consulta o banco de dados.
+-O Hibernate transforma o resultado em um objeto java.
+-O Controller retorna esse objeto.
+-O Spring utiliza o Jackson para converter o objeto Java em JSON.
+-o Postman apresenta o resultado.
+
+Quando o Postman manda um POST /equipamentos/cadastrar, como o Spring sabe qual método de qual controller chamar?
+RESPOSTA: O Spring utiliza as anotações de mapeamento das rotas.
+
+O @Valid barrou o pedido. O Service ficou sabendo? E o banco?
+RESPOSTA: Quando o @Valid identifica dados inválidos, a validação interrompe o processamento antes de o método do Controller executar normalmente.
+
+Qual a diferença entre o @NotBlank na entidade e o nullable = false no @Column? Se os dois barram o mesmo nome vazio, por que ter os dois?
+RESPOSTA: Eles atuam m momentos diferentes.
+@NotBlank é uma validação feita na aplicação. Impede valores nulos, vazios ou contendo apenas espaços.
+@Comumn(null = false) é uma restrição de banco de dados. Impede que a coluna receba valores nulos.
+Utilizamos os dois porque eles trabalham em conjunto.
+
+Ontem os dados sumiam quando o servidor reiniciava, e hoje não somem mais. O que mudou, e onde?
+RESPOSTA:Acredito que mudou a configuração do banco H2 no arquivo aplication.properties.
+
+Quem cria as tabelas no banco? Em algum momento a gente escreveu CREATE TABLE? Como isso acontece?
+RESPOSTA: Quem cria as tabelas pode ser o Hibernate, quando configurado para gerenciar a estrutura do banco.
+No nosso projeto, utilizamos a anotação @Entity nas classes e o Hibernate identifica quais tabelas precisam existir.
+
+O nome existsByPatrimonio é só um nome, e ninguém escreveu o código dele. Como o Spring sabe o que esse método tem que fazer?
+RESPOSTA: Isso acontece por meio dos Derived Query Method do Spring Data JPA.
+O Spring interpreta o nome do método e identifica a operação que deve realizar.
