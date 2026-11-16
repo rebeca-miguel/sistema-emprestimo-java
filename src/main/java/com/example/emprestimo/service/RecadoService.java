@@ -1,6 +1,6 @@
 package com.example.emprestimo.service;
 
-import com.example.emprestimo.Repository.RecadoRepository;
+import com.example.emprestimo.repository.RecadoRepository;
 import com.example.emprestimo.model.Recado;
 import org.springframework.stereotype.Service;
 

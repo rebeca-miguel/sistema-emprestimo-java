@@ -1,4 +1,4 @@
-package com.example.emprestimo.Repository;
+package com.example.emprestimo.repository;
 
 import com.example.emprestimo.model.Equipamento;
 import com.example.emprestimo.model.TipoEquipamento;
