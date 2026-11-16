@@ -1,4 +1,4 @@
-package com.example.emprestimo.model;
+package com.example.emprestimo.atividadeSpring1.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

@@ -1,8 +1,8 @@
-package com.example.emprestimo.controller;
+package com.example.emprestimo.atividadeSpring1.controller;
 
 
-import com.example.emprestimo.model.Recado;
-import com.example.emprestimo.service.RecadoService;
+import com.example.emprestimo.atividadeSpring1.model.Recado;
+import com.example.emprestimo.atividadeSpring1.service.RecadoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 

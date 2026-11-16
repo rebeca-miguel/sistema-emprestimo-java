@@ -1,7 +1,7 @@
-package com.example.emprestimo.service;
+package com.example.emprestimo.atividadeSpring1.service;
 
-import com.example.emprestimo.repository.RecadoRepository;
-import com.example.emprestimo.model.Recado;
+import com.example.emprestimo.atividadeSpring1.repository.RecadoRepository;
+import com.example.emprestimo.atividadeSpring1.model.Recado;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -10,25 +10,16 @@ public class Equipamento {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
-        @NotBlank(message = "O patrimônio é obrigatório")
-        @Column(nullable = false, unique = true)
         private String patrimonio;
 
-        @NotBlank(message = "O nome é obrigatório")
-        @Column(nullable = false)
         private String nome;
 
-        @NotBlank(message = "O tipo é obrigatório")
         @Enumerated(EnumType.STRING)
-        @Column(nullable = false)
         private TipoEquipamento tipo;
 
-        @Column(nullable = false)
-        private boolean disponivel = true;
+        private boolean disponivel;
 
-        public Equipamento() { }
-        // getters e setters no próximo slide
-
+        public Equipamento() {}
 
     public Long getId() {
         return id;
@@ -66,7 +57,21 @@ public class Equipamento {
         return disponivel;
     }
 
-    public void setDisponivel(boolean disponivel) {
-        this.disponivel = disponivel;
+    public void setDisponivel(boolean dsponivel) {
+        this.disponivel = dsponivel;
+    }
+
+    //Regra R4: para emprestar equipamento
+
+    public void emprestar() {
+            if (!disponivel) {
+                throw new IllegalArgumentException("Equipamento indisponível");
+            }
+            disponivel = false;
+    }
+
+    //regra devolver
+    public void devolver() {
+            disponivel = true;
     }
 }
