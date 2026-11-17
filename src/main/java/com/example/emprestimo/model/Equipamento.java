@@ -2,6 +2,7 @@ package com.example.emprestimo.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Equipamento {
@@ -10,10 +11,13 @@ public class Equipamento {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
+        @NotBlank(message = "O patrimônio é obrigatório")
         private String patrimonio;
 
+        @NotBlank(message = "O nome do equipamento é obrigatório")
         private String nome;
 
+        @NotNull(message = "O tipo do equipamento é obrigatório")
         @Enumerated(EnumType.STRING)
         private TipoEquipamento tipo;
 

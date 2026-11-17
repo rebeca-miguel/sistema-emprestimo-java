@@ -1,7 +1,9 @@
 package com.example.emprestimo.controller;
 
+import com.example.emprestimo.exception.NaoEncontradoException;
 import com.example.emprestimo.model.Colaborador;
 import com.example.emprestimo.service.ColaboradorService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +19,7 @@ public class ColaboradorController {
     }
 //cadastrar colaboradores
     @PostMapping
-    public  Colaborador salvar(@RequestBody Colaborador colaborador) {
+    public  Colaborador salvar(@RequestBody @Valid Colaborador colaborador) {
         return service.salvar(colaborador);
     }
 
@@ -30,11 +32,11 @@ public class ColaboradorController {
     @GetMapping("/{id}")
     public Colaborador buscarPorId(@PathVariable Long id) {
         return service.buscarPorId(id)
-                .orElseThrow(() -> new RuntimeException("Colaborador não encontrado"));
+                .orElseThrow(() -> new NaoEncontradoException("Colaborador não encontrado"));
     }
 
     //excluir colaborador
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public  void excluir(@PathVariable Long id) {
         service.excluir(id);
     }

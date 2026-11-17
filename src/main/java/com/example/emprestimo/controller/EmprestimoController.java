@@ -1,5 +1,6 @@
 package com.example.emprestimo.controller;
 
+import com.example.emprestimo.exception.NaoEncontradoException;
 import com.example.emprestimo.model.Emprestimo;
 import com.example.emprestimo.service.EmprestimoService;
 import org.springframework.web.bind.annotation.*;
@@ -29,12 +30,17 @@ public class EmprestimoController {
     @GetMapping("/{id}")
     public Emprestimo buscarPorId(@PathVariable Long id){
         return service.buscarPorId(id)
-                .orElseThrow(() -> new RuntimeException("Empréstimo não encontrado"));
+                .orElseThrow(() -> new NaoEncontradoException("Empréstimo não encontrado"));
     }
 
     @DeleteMapping("/{id}")
     public void excluir(@PathVariable Long id) {
         service.excluir(id);
+    }
+
+    @PutMapping("/{id}/devolver")
+    public Emprestimo devolver(@PathVariable Long id) {
+        return service.devolver(id);
     }
 
 }

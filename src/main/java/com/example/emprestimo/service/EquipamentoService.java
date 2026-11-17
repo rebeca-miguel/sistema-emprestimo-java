@@ -1,5 +1,6 @@
 package com.example.emprestimo.service;
 
+import com.example.emprestimo.exception.ConflitoException;
 import com.example.emprestimo.model.Equipamento;
 import com.example.emprestimo.model.TipoEquipamento;
 import com.example.emprestimo.repository.EquipamentoRepository;
@@ -37,7 +38,7 @@ public class EquipamentoService {
     public Equipamento buscar(Long id) {
         return repository.findById(id)
                 .orElseThrow(() ->
-                        new IllegalStateException("Equipamento não encontrado"));
+                        new ConflitoException("Equipamento não encontrado"));
 
 
 

@@ -3,6 +3,7 @@ package com.example.emprestimo.controller;
 import com.example.emprestimo.model.Equipamento;
 import com.example.emprestimo.model.TipoEquipamento;
 import com.example.emprestimo.service.EquipamentoService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class EquipamentoController {
 
     //cadastrar equipamento
     @PostMapping
-    public Equipamento cadastrar(@RequestBody Equipamento equipamento) {
+    public Equipamento cadastrar(@RequestBody @Valid Equipamento equipamento) {
         return service.cadastrar(equipamento);
     }
 

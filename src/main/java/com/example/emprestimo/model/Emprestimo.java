@@ -1,6 +1,8 @@
 package com.example.emprestimo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
@@ -11,16 +13,21 @@ public class Emprestimo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "O equipamento é obrigatório")
     @ManyToOne
     @JoinColumn(name = "equipamento_id")
     private Equipamento equipamento;
 
+    @NotNull(message = "O colaborador é obrigatório")
     @ManyToOne
     @JoinColumn(name = "colaborador_id")
     private Colaborador colaborador;
 
+    @NotNull(message = "A data do empréstimo é obrigatório")
+    @FutureOrPresent(message = "A data do empréstimo não pode ser anterior à data atual")
     private LocalDate dataEmprestimo;
 
+    @NotNull(message = "A data prevista de devolução é obrigatória")
     private LocalDate dataPrevistaDevolucao;
 
     private LocalDate dataDevolucao;
