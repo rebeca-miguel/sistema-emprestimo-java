@@ -10,10 +10,13 @@ public interface EquipamentoRepository extends JpaRepository<Equipamento, Long> 
 
     boolean existsByPatrimonio(String patrimonio);
 
+    boolean existsByPatrimonioAndIdNot(String patrimonio, Long id);
+
     List<Equipamento> findByTipo(TipoEquipamento tipo);
 
     List<Equipamento> findByDisponivel(boolean disponivel); //novo
 
-    List<Equipamento> findByTipoAndDisponivel(TipoEquipamento tipo, boolean disponivel); //novo
+    List<Equipamento> findByTipoAndDisponivel(TipoEquipamento tipo, boolean disponivel);
+
 
 }

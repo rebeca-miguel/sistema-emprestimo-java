@@ -61,8 +61,8 @@ public class Equipamento {
         return disponivel;
     }
 
-    public void setDisponivel(boolean dsponivel) {
-        this.disponivel = dsponivel;
+    public void setDisponivel(boolean disponivel) {
+        this.disponivel = disponivel;
     }
 
     //Regra R4: para emprestar equipamento

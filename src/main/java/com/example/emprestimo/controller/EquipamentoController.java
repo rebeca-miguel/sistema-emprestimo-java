@@ -36,7 +36,18 @@ public class EquipamentoController {
     //cadastrar equipamento
     @PostMapping
     public Equipamento cadastrar(@RequestBody @Valid Equipamento equipamento) {
+
         return service.cadastrar(equipamento);
+    }
+
+    @PutMapping("/{id}")
+    public Equipamento atualizar(@PathVariable Long id, @RequestBody @Valid Equipamento dados) {
+        return service.atualizar(id, dados);
+    }
+
+    @DeleteMapping("/{id}")
+    public void excluir(@PathVariable Long id) {
+        service.excluir(id);
     }
 
 

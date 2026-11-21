@@ -3,6 +3,7 @@ package com.example.emprestimo.controller;
 import com.example.emprestimo.exception.NaoEncontradoException;
 import com.example.emprestimo.model.Emprestimo;
 import com.example.emprestimo.service.EmprestimoService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +19,8 @@ public class EmprestimoController {
     }
 
     @PostMapping
-    public Emprestimo salvar(@RequestBody Emprestimo emprestimo) {
+    public Emprestimo salvar(@RequestBody @Valid Emprestimo emprestimo) {
+
         return service.salvar(emprestimo);
     }
 

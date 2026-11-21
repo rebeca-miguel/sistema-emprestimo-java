@@ -40,4 +40,9 @@ public class ColaboradorController {
     public  void excluir(@PathVariable Long id) {
         service.excluir(id);
     }
+
+    @PutMapping("/{id}")
+    public Colaborador atualizar(@PathVariable Long id, @RequestBody @Valid Colaborador dados) {
+        return service.atualizar(id, dados);
+    }
 }

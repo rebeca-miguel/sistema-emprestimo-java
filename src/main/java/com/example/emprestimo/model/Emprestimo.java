@@ -23,7 +23,7 @@ public class Emprestimo {
     @JoinColumn(name = "colaborador_id")
     private Colaborador colaborador;
 
-    @NotNull(message = "A data do empréstimo é obrigatório")
+    @NotNull(message = "A data do empréstimo é obrigatória")
     @FutureOrPresent(message = "A data do empréstimo não pode ser anterior à data atual")
     private LocalDate dataEmprestimo;
 
