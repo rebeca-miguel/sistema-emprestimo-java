@@ -1,133 +1,152 @@
-# Sistema de Empréstimo de Equipamentos
+# Controle de Equipamentos
 
-API REST desenvolvida com Java 25 e Spring Boot para gerenciar o empréstimo de equipamentos de uma empresa.
+Sistema web para gerenciamento de equipamentos, colaboradores e empréstimos, desenvolvido para facilitar o controle de recursos e o acompanhamento das devoluções.
 
-O sistema permite cadastrar colaboradores e equipamentos, registrar empréstimos, controlar devoluções e identificar empréstimos em atraso.
+**Projeto de portfólio — Desenvolvimento Back-end Java**
 
-## Tecnologias utilizadas
+## Demonstração
 
-- Java 25
-- Spring Boot
-- Spring Data JPA
-- H2 Database
-- Maven
-- JUnit 5
+**Aplicação publicada:**  
+https://sistema-emprestimo-java.onrender.com
+
+**Repositório:**  
+https://github.com/rebeca-miguel/sistema-emprestimo-java
 
 ## Funcionalidades
 
-- Cadastro e consulta de colaboradores.
-- Cadastro, consulta, atualização e exclusão de equipamentos.
-- Registro de empréstimos.
-- Controle de disponibilidade dos equipamentos.
-- Registro de devoluções.
-- Identificação de empréstimos em atraso.
-- Validação de regras de negócio.
+- **Dashboard:** visualização de indicadores e resumo das movimentações.
+- **Equipamentos:** cadastro e gerenciamento de equipamentos.
+- **Colaboradores:** cadastro e gerenciamento de colaboradores.
+- **Empréstimos:** registro e acompanhamento de empréstimos.
+- **Devoluções:** registro da devolução dos equipamentos.
+- **Controle de disponibilidade:** atualização da disponibilidade dos equipamentos conforme as movimentações.
+- **Interface responsiva:** adaptação para computadores, tablets e celulares.
 
-## Endpoints da API
+## Tecnologias utilizadas
 
-### Colaboradores
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| POST | `/colaboradores` | Cadastrar colaborador |
-| GET | `/colaboradores` | Listar colaboradores |
-| GET | `/colaboradores/{id}` | Buscar colaborador por ID |
-| GET | `/colaboradores/{id}/emprestimos` | Listar empréstimos do colaborador |
-
-### Equipamentos
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| POST | `/equipamentos` | Cadastrar equipamento |
-| GET | `/equipamentos` | Listar equipamentos |
-| GET | `/equipamentos/{id}` | Buscar equipamento por ID |
-| PUT | `/equipamentos/{id}` | Atualizar equipamento |
-| DELETE | `/equipamentos/{id}` | Excluir equipamento |
-
-### Empréstimos
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| POST | `/emprestimos?equipamentoId=1&colaboradorId=2` | Registrar empréstimo |
-| GET | `/emprestimos` | Listar empréstimos |
-| GET | `/emprestimos?atrasados=true` | Listar empréstimos em atraso |
-| GET | `/emprestimos/{id}` | Buscar empréstimo por ID |
-| PUT | `/emprestimos/{id}/devolucao` | Registrar devolução |
-
-## Regras de negócio
-
-- Não permitir equipamentos com número de patrimônio duplicado.
-- Novos equipamentos devem estar disponíveis.
-- Não permitir colaboradores com e-mail duplicado.
-- Somente equipamentos disponíveis podem ser emprestados.
-- O prazo padrão de empréstimo é de 14 dias.
-- Não permitir devolução duplicada.
-- Ao devolver um equipamento, sua disponibilidade deve ser atualizada.
-- Identificar empréstimos em atraso.
-- Não permitir excluir equipamentos que possuam histórico de empréstimos.
-- Não permitir novos empréstimos para colaboradores com empréstimos em atraso.
-
-## Como executar o projeto
-
-**Pré-requisitos:**
+### Back-end
 - Java 25
+- Spring Boot
+- Spring Data JPA
+- API REST
 - Maven
+- Docker
 
-Clone o repositório:
+### Front-end
+- React
+- TypeScript
+- Vite
+- HTML
+- CSS
 
-```bash
-git clone URL_DO_SEU_REPOSITORIO
+### Ferramentas
+- Git e GitHub
+- IntelliJ IDEA
+- Render
+
+## Arquitetura do projeto
+
+O projeto utiliza uma arquitetura integrada, com backend responsável pelas regras de negócio e persistência dos dados, e frontend responsável pela interface e interação com o usuário.
+
+O frontend consome os endpoints da API REST desenvolvida com Spring Boot.
+
+## Estrutura do projeto
+
+```text
+sistema-emprestimo-java/
+│
+├── src/
+│   └── main/
+│       ├── java/
+│       └── resources/
+│
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── vite.config.ts
+│
+├── pom.xml
+├── Dockerfile
+└── README.md
 ```
 
-Entre na pasta do projeto:
+## Como executar o projeto localmente
+
+### Pré-requisitos
+
+- Java 25
+- Maven
+- Node.js 22 ou superior
+- npm
+- Git
+
+### 1. Clonar o repositório
 
 ```bash
-cd emprestimo
+git clone https://github.com/rebeca-miguel/sistema-emprestimo-java.git
+```
+
+### 2. Executar o back-end
+
+Entre na pasta principal do projeto:
+
+```bash
+cd sistema-emprestimo-java
 ```
 
 Execute a aplicação:
 
 ```bash
-./mvnw spring-boot:run
+mvn spring-boot:run
 ```
 
-No Windows, utilize:
-
-```powershell
-.\mvnw.cmd spring-boot:run
-```
-
-A aplicação será iniciada na porta 8080, caso outra porta não seja configurada pelo ambiente.
-
-## Banco de dados
-
-O projeto utiliza o banco de dados H2 em modo arquivo.
-
-Console H2 disponível localmente:
+O backend ficará disponível em:
 
 ```text
-http://localhost:8080/h2-console
+http://localhost:8080
 ```
+
+### 3. Executar o front-end
+
+Em outro terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+O frontend ficará disponível em:
+
+```text
+http://localhost:5173
+```
+
+Para executar localmente, configure o endereço da API no arquivo `frontend/src/api.ts` para apontar para o backend local.
 
 ## Testes automatizados
 
-Os testes foram desenvolvidos com JUnit 5.
+O projeto possui testes automatizados no backend.
 
-Para executar os testes no Windows:
+Para executá-los:
 
-```powershell
-.\mvnw.cmd test
-.\mvnw.cmd "-Dmaven.repo.local=C:\maven-repository" test
+```bash
+mvn test
 ```
 
-## Deploy
+## Publicação
 
-A aplicação será publicada no Render utilizando Docker.
+A aplicação está publicada no Render, utilizando Docker para compilar e executar o frontend e o backend no mesmo serviço.
 
-**URL da API:** será adicionada após a publicação.
+## Objetivo do projeto
 
-## Autoria
+Este projeto foi desenvolvido como objetivo de aplicar conhecimentos em desenvolvimento back-end Java, construção de APIs REST, integração com interfaces web, testes automatizados e publicação de aplicações.
 
-Projeto desenvolvido como atividade prática de desenvolvimento back-end Java.
+Também representa uma oportunidade de praticar organização de código, resolução de problemas e desenvolvimento de uma solução completa.
 
-- Rebeca Gaspar Miguel
+---
+
+**Desenvolvido por Rebeca Miguel**
+
+GitHub: https://github.com/rebeca-miguel
