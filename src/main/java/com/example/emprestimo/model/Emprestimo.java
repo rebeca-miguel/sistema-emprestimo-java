@@ -79,6 +79,19 @@ public class Emprestimo {
     }
 
     public void setDataDevolucao(LocalDate dataDevolucao) {
+
         this.dataDevolucao = dataDevolucao;
+    }
+
+    public void devolver(LocalDate data) {
+        if (dataDevolucao != null) {
+            throw new IllegalArgumentException("Este empréstimo já foi devolvido.");
+        }
+
+        dataDevolucao = data;
+    }
+
+    public boolean estaAtrasadoEm(LocalDate data) {
+        return dataDevolucao == null && data.isAfter(dataPrevistaDevolucao);
     }
 }

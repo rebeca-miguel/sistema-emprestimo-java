@@ -10,4 +10,6 @@ public interface EmprestimoRepository extends JpaRepository<Emprestimo, Long> {
     boolean existsByEquipamentoIdAndDataDevolucaoIsNull(Long equipamentoId);
 
     boolean existsByEquipamentoId(Long equipamento);
+
+    Object findById(long l);
 }

@@ -91,12 +91,13 @@ public class EmprestimoService {
                 .orElseThrow(() -> new NaoEncontradoException("Empréstimo não encontrado"));
 
         // verifica se o equipamento já foi devolvido
-        if (emprstimo.getDataDevolucao() != null) {
-            throw new ConflitoException("Este equipamento já foi devolvido.");
-        }
-
         //Registra a data de devolução
-        emprstimo.setDataDevolucao(LocalDate.now());
+        try {
+            emprstimo.devolver(LocalDate.now());
+
+        } catch (IllegalArgumentException e) {
+            throw new ConflitoException(e.getMessage());
+        }
 
         //atualiza a disponibilidade do equipamento
         var equipamento = emprstimo.getEquipamento();
