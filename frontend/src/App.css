@@ -371,20 +371,14 @@ button {
   line-height: 1.5;
 }
 
-.secondary-button {
-  background: white;
-  border: 1px solid var(--borda);
-  padding: 10px 16px;
-  border-radius: 8px;
-  color: var(--texto);
+.total-registros {
   font-size: 12px;
+  color: var(--texto-secundario);
+  font-weight: 500;
+  white-space: nowrap;
 }
 
-.secondary-button:hover {
-  background: var(--fundo);
-}
-
-/* BOTÕES */
+/* BOTÕES PRINCIPAIS */
 
 .primary-button {
   background: var(--verde-principal);
@@ -404,6 +398,71 @@ button {
 
 .primary-button:disabled {
   opacity: 0.65;
+  cursor: wait;
+  transform: none;
+}
+
+.secondary-button {
+  background: white;
+  border: 1px solid var(--borda);
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: var(--texto);
+  font-size: 12px;
+  transition: background 0.2s;
+}
+
+.secondary-button:hover {
+  background: var(--fundo);
+}
+
+.secondary-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* BOTÕES DE EDIÇÃO E EXCLUSÃO */
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit-button,
+.delete-button {
+  border: none;
+  border-radius: 7px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background 0.2s, transform 0.2s;
+  white-space: nowrap;
+}
+
+.edit-button {
+  background: var(--azul-claro);
+  color: var(--azul);
+}
+
+.edit-button:hover {
+  background: #d5eaf7;
+  transform: translateY(-1px);
+}
+
+.delete-button {
+  background: #ffebeb;
+  color: var(--vermelho);
+}
+
+.delete-button:hover {
+  background: #fbd7d9;
+  transform: translateY(-1px);
+}
+
+.edit-button:disabled,
+.delete-button:disabled {
+  opacity: 0.6;
   cursor: wait;
   transform: none;
 }
@@ -454,14 +513,14 @@ button {
   box-shadow: 0 0 0 3px rgba(0, 168, 120, 0.12);
 }
 
-/* TABELAS */
-
-.total-registros {
-  font-size: 12px;
-  color: var(--texto-secundario);
-  font-weight: 500;
-  white-space: nowrap;
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
+
+/* TABELAS */
 
 .table-container {
   width: 100%;
@@ -784,9 +843,27 @@ select:focus-visible {
     font-size: 14px;
   }
 
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+
   .primary-button,
   .secondary-button {
     min-height: 43px;
+  }
+
+  .action-buttons {
+    flex-wrap: wrap;
+  }
+
+  .edit-button,
+  .delete-button {
+    min-height: 36px;
   }
 
   .table-container {

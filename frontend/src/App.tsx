@@ -20,7 +20,6 @@ function obterDataISO(data: Date) {
   const ano = data.getFullYear()
   const mes = String(data.getMonth() + 1).padStart(2, '0')
   const dia = String(data.getDate()).padStart(2, '0')
-
   return `${ano}-${mes}-${dia}`
 }
 
@@ -44,6 +43,13 @@ function App() {
   const [mostrarFormulario, setMostrarFormulario] = useState(false)
   const [salvando, setSalvando] = useState(false)
 
+  // Identificação dos registros em edição
+  const [equipamentoEmEdicao, setEquipamentoEmEdicao] =
+      useState<number | null>(null)
+
+  const [colaboradorEmEdicao, setColaboradorEmEdicao] =
+      useState<number | null>(null)
+
   // Dados do equipamento
   const [nome, setNome] = useState('')
   const [patrimonio, setPatrimonio] = useState('')
@@ -56,7 +62,8 @@ function App() {
   // Dados do empréstimo
   const [equipamentoId, setEquipamentoId] = useState('')
   const [colaboradorId, setColaboradorId] = useState('')
-  const [dataEmprestimo, setDataEmprestimo] = useState(obterDataISO(new Date()))
+  const [dataEmprestimo, setDataEmprestimo] =
+      useState(obterDataISO(new Date()))
   const [dataPrevistaDevolucao, setDataPrevistaDevolucao] =
       useState(obterDataFutura(14))
 
@@ -94,7 +101,6 @@ function App() {
       setEquipamentos(dadosEquipamentos)
       setEmprestimos(dadosEmprestimos)
       setColaboradores(dadosColaboradores)
-
     } catch {
       setErro('Erro ao conectar com o servidor.')
     } finally {
@@ -156,10 +162,50 @@ function App() {
     setSucesso('')
   }
 
+  function limparFormularioEquipamento() {
+    setNome('')
+    setPatrimonio('')
+    setTipo('NOTEBOOK')
+    setEquipamentoEmEdicao(null)
+  }
+
+  function limparFormularioColaborador() {
+    setNome('')
+    setEmail('')
+    setMatricula('')
+    setColaboradorEmEdicao(null)
+  }
+
+  function cancelarFormulario() {
+    setMostrarFormulario(false)
+    limparFormularioEquipamento()
+    limparFormularioColaborador()
+    limparMensagens()
+  }
+
   function mudarTela(novaTela: Tela) {
     setTela(novaTela)
     setMostrarFormulario(false)
+    limparFormularioEquipamento()
+    limparFormularioColaborador()
     limparMensagens()
+  }
+
+  // Prepara o formulário para cadastrar um equipamento
+  function novoEquipamento() {
+    limparFormularioEquipamento()
+    limparMensagens()
+    setMostrarFormulario(true)
+  }
+
+  // Preenche o formulário com os dados do equipamento selecionado
+  function editarEquipamento(equipamento: Equipamento) {
+    limparMensagens()
+    setNome(equipamento.nome)
+    setPatrimonio(equipamento.patrimonio)
+    setTipo(equipamento.tipo)
+    setEquipamentoEmEdicao(equipamento.id)
+    setMostrarFormulario(true)
   }
 
   async function cadastrarEquipamento(event: FormEvent<HTMLFormElement>) {
@@ -169,42 +215,106 @@ function App() {
       setSalvando(true)
       limparMensagens()
 
-      const resposta = await fetch(`${API_URL}/equipamentos`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          nome,
-          patrimonio,
-          tipo
-        })
+      const editando = equipamentoEmEdicao !== null
+
+      const resposta = await fetch(
+          editando
+              ? `${API_URL}/equipamentos/${equipamentoEmEdicao}`
+              : `${API_URL}/equipamentos`,
+          {
+            method: editando ? 'PUT' : 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              nome,
+              patrimonio,
+              tipo
+            })
+          }
+      )
+
+      if (!resposta.ok) {
+        const mensagem = await resposta.text()
+        throw new Error(
+            mensagem ||
+            (editando
+                ? 'Não foi possível atualizar o equipamento.'
+                : 'Não foi possível cadastrar o equipamento.')
+        )
+      }
+
+      limparFormularioEquipamento()
+      setMostrarFormulario(false)
+
+      await buscarDados()
+
+      setSucesso(
+          editando
+              ? 'Equipamento atualizado com sucesso!'
+              : 'Equipamento cadastrado com sucesso!'
+      )
+    } catch (error) {
+      setErro(
+          error instanceof Error
+              ? error.message
+              : 'Erro ao salvar equipamento.'
+      )
+    } finally {
+      setSalvando(false)
+    }
+  }
+
+  async function excluirEquipamento(id: number) {
+    const confirmar = window.confirm(
+        'Tem certeza de que deseja excluir este equipamento?'
+    )
+
+    if (!confirmar) return
+
+    try {
+      setSalvando(true)
+      limparMensagens()
+
+      const resposta = await fetch(`${API_URL}/equipamentos/${id}`, {
+        method: 'DELETE'
       })
 
       if (!resposta.ok) {
         const mensagem = await resposta.text()
         throw new Error(
-            mensagem || 'Não foi possível cadastrar o equipamento.'
+            mensagem || 'Não foi possível excluir o equipamento.'
         )
       }
 
-      setNome('')
-      setPatrimonio('')
-      setTipo('NOTEBOOK')
-      setMostrarFormulario(false)
-
       await buscarDados()
-      setSucesso('Equipamento cadastrado com sucesso!')
-
+      setSucesso('Equipamento excluído com sucesso!')
     } catch (error) {
       setErro(
           error instanceof Error
               ? error.message
-              : 'Erro ao cadastrar equipamento.'
+              : 'Erro ao excluir equipamento.'
       )
     } finally {
       setSalvando(false)
     }
+  }
+
+  // Prepara o formulário para cadastrar um colaborador
+  function novoColaborador() {
+    limparFormularioColaborador()
+    limparMensagens()
+    setMostrarFormulario(true)
+  }
+
+  // Preenche o formulário com os dados do colaborador selecionado
+  function editarColaborador(colaborador: Colaborador) {
+    limparMensagens()
+    setNome(colaborador.nome)
+    setEmail(colaborador.email)
+    setMatricula(colaborador.matricula)
+    setColaboradorEmEdicao(colaborador.id)
+    setMostrarFormulario(true)
   }
 
   async function cadastrarColaborador(event: FormEvent<HTMLFormElement>) {
@@ -214,38 +324,85 @@ function App() {
       setSalvando(true)
       limparMensagens()
 
-      const resposta = await fetch(`${API_URL}/colaboradores`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          nome,
-          email,
-          matricula
-        })
+      const editando = colaboradorEmEdicao !== null
+
+      const resposta = await fetch(
+          editando
+              ? `${API_URL}/colaboradores/${colaboradorEmEdicao}`
+              : `${API_URL}/colaboradores`,
+          {
+            method: editando ? 'PUT' : 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              nome,
+              email,
+              matricula
+            })
+          }
+      )
+
+      if (!resposta.ok) {
+        const mensagem = await resposta.text()
+        throw new Error(
+            mensagem ||
+            (editando
+                ? 'Não foi possível atualizar o colaborador.'
+                : 'Não foi possível cadastrar o colaborador.')
+        )
+      }
+
+      limparFormularioColaborador()
+      setMostrarFormulario(false)
+
+      await buscarDados()
+
+      setSucesso(
+          editando
+              ? 'Colaborador atualizado com sucesso!'
+              : 'Colaborador cadastrado com sucesso!'
+      )
+    } catch (error) {
+      setErro(
+          error instanceof Error
+              ? error.message
+              : 'Erro ao salvar colaborador.'
+      )
+    } finally {
+      setSalvando(false)
+    }
+  }
+
+  async function excluirColaborador(id: number) {
+    const confirmar = window.confirm(
+        'Tem certeza de que deseja excluir este colaborador?'
+    )
+
+    if (!confirmar) return
+
+    try {
+      setSalvando(true)
+      limparMensagens()
+
+      const resposta = await fetch(`${API_URL}/colaboradores/${id}`, {
+        method: 'DELETE'
       })
 
       if (!resposta.ok) {
         const mensagem = await resposta.text()
         throw new Error(
-            mensagem || 'Não foi possível cadastrar o colaborador.'
+            mensagem || 'Não foi possível excluir o colaborador.'
         )
       }
 
-      setNome('')
-      setEmail('')
-      setMatricula('')
-      setMostrarFormulario(false)
-
       await buscarDados()
-      setSucesso('Colaborador cadastrado com sucesso!')
-
+      setSucesso('Colaborador excluído com sucesso!')
     } catch (error) {
       setErro(
           error instanceof Error
               ? error.message
-              : 'Erro ao cadastrar colaborador.'
+              : 'Erro ao excluir colaborador.'
       )
     } finally {
       setSalvando(false)
@@ -307,7 +464,6 @@ function App() {
 
       await buscarDados()
       setSucesso('Empréstimo registrado com sucesso!')
-
     } catch (error) {
       setErro(
           error instanceof Error
@@ -324,9 +480,7 @@ function App() {
         'Confirma a devolução deste equipamento?'
     )
 
-    if (!confirmar) {
-      return
-    }
+    if (!confirmar) return
 
     try {
       setSalvando(true)
@@ -334,9 +488,7 @@ function App() {
 
       const resposta = await fetch(
           `${API_URL}/emprestimos/${id}/devolver`,
-          {
-            method: 'PUT'
-          }
+          { method: 'PUT' }
       )
 
       if (!resposta.ok) {
@@ -348,7 +500,6 @@ function App() {
 
       await buscarDados()
       setSucesso('Devolução registrada com sucesso!')
-
     } catch (error) {
       setErro(
           error instanceof Error
@@ -360,11 +511,9 @@ function App() {
     }
   }
 
-  // Abre e fecha o formulário de empréstimo
   function abrirFormularioEmprestimo() {
     if (mostrarFormulario) {
-      setMostrarFormulario(false)
-      limparMensagens()
+      cancelarFormulario()
       return
     }
 
@@ -516,7 +665,6 @@ function App() {
                       <h2>Empréstimos recentes</h2>
                       <p>Acompanhe as últimas movimentações.</p>
                     </div>
-
                     <span className="total-registros">
                   {emprestimos.length} registros
                 </span>
@@ -545,7 +693,6 @@ function App() {
                             <th>Situação</th>
                           </tr>
                           </thead>
-
                           <tbody>
                           {emprestimosRecentes.map((emprestimo) => {
                             const situacao = obterSituacao(emprestimo)
@@ -558,9 +705,7 @@ function App() {
                                   <td>{formatarData(emprestimo.dataEmprestimo)}</td>
                                   <td>{formatarData(emprestimo.dataPrevistaDevolucao)}</td>
                                   <td>
-                              <span
-                                  className={`status-badge ${situacao.toLowerCase().replace(' ', '-')}`}
-                              >
+                              <span className={`status-badge ${situacao.toLowerCase().replace(' ', '-')}`}>
                                 {situacao}
                               </span>
                                   </td>
@@ -575,6 +720,7 @@ function App() {
               </>
           )}
 
+          {/* EQUIPAMENTOS */}
           {tela === 'equipamentos' && (
               <section className="content-card">
                 <div className="section-header">
@@ -585,21 +731,28 @@ function App() {
 
                   <button
                       className="primary-button"
+                      type="button"
+                      disabled={salvando}
                       onClick={() => {
-                        setMostrarFormulario(!mostrarFormulario)
-                        limparMensagens()
+                        if (mostrarFormulario) {
+                          cancelarFormulario()
+                        } else {
+                          novoEquipamento()
+                        }
                       }}
                   >
-                    {mostrarFormulario ? 'Cancelar' : '+ Novo equipamento'}
+                    {mostrarFormulario
+                        ? 'Cancelar'
+                        : '+ Novo equipamento'}
                   </button>
                 </div>
 
                 {mostrarFormulario && (
                     <form className="equipment-form" onSubmit={cadastrarEquipamento}>
                       <div className="form-field">
-                        <label htmlFor="nome">Nome do equipamento</label>
+                        <label htmlFor="nomeEquipamento">Nome do equipamento</label>
                         <input
-                            id="nome"
+                            id="nomeEquipamento"
                             value={nome}
                             onChange={(event) => setNome(event.target.value)}
                             placeholder="Ex.: Notebook Dell"
@@ -633,13 +786,28 @@ function App() {
                         </select>
                       </div>
 
-                      <button
-                          className="primary-button"
-                          type="submit"
-                          disabled={salvando}
-                      >
-                        {salvando ? 'Salvando...' : 'Salvar equipamento'}
-                      </button>
+                      <div className="form-actions">
+                        <button
+                            className="primary-button"
+                            type="submit"
+                            disabled={salvando}
+                        >
+                          {salvando
+                              ? 'Salvando...'
+                              : equipamentoEmEdicao !== null
+                                  ? 'Atualizar equipamento'
+                                  : 'Salvar equipamento'}
+                        </button>
+
+                        <button
+                            className="secondary-button"
+                            type="button"
+                            onClick={cancelarFormulario}
+                            disabled={salvando}
+                        >
+                          Cancelar
+                        </button>
+                      </div>
                     </form>
                 )}
 
@@ -662,9 +830,9 @@ function App() {
                           <th>Patrimônio</th>
                           <th>Tipo</th>
                           <th>Disponibilidade</th>
+                          <th>Ações</th>
                         </tr>
                         </thead>
-
                         <tbody>
                         {equipamentos.map((equipamento) => (
                             <tr key={equipamento.id}>
@@ -672,11 +840,29 @@ function App() {
                               <td>{equipamento.patrimonio}</td>
                               <td>{equipamento.tipo}</td>
                               <td>
-                          <span
-                              className={`status-badge ${equipamento.disponivel ? 'devolvido' : 'em-atraso'}`}
-                          >
+                          <span className={`status-badge ${equipamento.disponivel ? 'devolvido' : 'em-atraso'}`}>
                             {equipamento.disponivel ? 'Disponível' : 'Emprestado'}
                           </span>
+                              </td>
+                              <td>
+                                <div className="action-buttons">
+                                  <button
+                                      className="edit-button"
+                                      type="button"
+                                      disabled={salvando}
+                                      onClick={() => editarEquipamento(equipamento)}
+                                  >
+                                    Editar
+                                  </button>
+                                  <button
+                                      className="delete-button"
+                                      type="button"
+                                      disabled={salvando}
+                                      onClick={() => excluirEquipamento(equipamento.id)}
+                                  >
+                                    Excluir
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                         ))}
@@ -687,6 +873,7 @@ function App() {
               </section>
           )}
 
+          {/* COLABORADORES */}
           {tela === 'colaboradores' && (
               <section className="content-card">
                 <div className="section-header">
@@ -697,21 +884,28 @@ function App() {
 
                   <button
                       className="primary-button"
+                      type="button"
+                      disabled={salvando}
                       onClick={() => {
-                        setMostrarFormulario(!mostrarFormulario)
-                        limparMensagens()
+                        if (mostrarFormulario) {
+                          cancelarFormulario()
+                        } else {
+                          novoColaborador()
+                        }
                       }}
                   >
-                    {mostrarFormulario ? 'Cancelar' : '+ Novo colaborador'}
+                    {mostrarFormulario
+                        ? 'Cancelar'
+                        : '+ Novo colaborador'}
                   </button>
                 </div>
 
                 {mostrarFormulario && (
                     <form className="equipment-form" onSubmit={cadastrarColaborador}>
                       <div className="form-field">
-                        <label htmlFor="nome">Nome completo</label>
+                        <label htmlFor="nomeColaborador">Nome completo</label>
                         <input
-                            id="nome"
+                            id="nomeColaborador"
                             value={nome}
                             onChange={(event) => setNome(event.target.value)}
                             placeholder="Ex.: Ana Souza"
@@ -742,13 +936,28 @@ function App() {
                         />
                       </div>
 
-                      <button
-                          className="primary-button"
-                          type="submit"
-                          disabled={salvando}
-                      >
-                        {salvando ? 'Salvando...' : 'Salvar colaborador'}
-                      </button>
+                      <div className="form-actions">
+                        <button
+                            className="primary-button"
+                            type="submit"
+                            disabled={salvando}
+                        >
+                          {salvando
+                              ? 'Salvando...'
+                              : colaboradorEmEdicao !== null
+                                  ? 'Atualizar colaborador'
+                                  : 'Salvar colaborador'}
+                        </button>
+
+                        <button
+                            className="secondary-button"
+                            type="button"
+                            onClick={cancelarFormulario}
+                            disabled={salvando}
+                        >
+                          Cancelar
+                        </button>
+                      </div>
                     </form>
                 )}
 
@@ -770,15 +979,35 @@ function App() {
                           <th>Nome</th>
                           <th>E-mail</th>
                           <th>Matrícula</th>
+                          <th>Ações</th>
                         </tr>
                         </thead>
-
                         <tbody>
                         {colaboradores.map((colaborador) => (
                             <tr key={colaborador.id}>
                               <td>{colaborador.nome}</td>
                               <td>{colaborador.email}</td>
                               <td>{colaborador.matricula}</td>
+                              <td>
+                                <div className="action-buttons">
+                                  <button
+                                      className="edit-button"
+                                      type="button"
+                                      disabled={salvando}
+                                      onClick={() => editarColaborador(colaborador)}
+                                  >
+                                    Editar
+                                  </button>
+                                  <button
+                                      className="delete-button"
+                                      type="button"
+                                      disabled={salvando}
+                                      onClick={() => excluirColaborador(colaborador.id)}
+                                  >
+                                    Excluir
+                                  </button>
+                                </div>
+                              </td>
                             </tr>
                         ))}
                         </tbody>
@@ -788,6 +1017,7 @@ function App() {
               </section>
           )}
 
+          {/* EMPRÉSTIMOS */}
           {tela === 'emprestimos' && (
               <section className="content-card">
                 <div className="section-header">
@@ -799,6 +1029,7 @@ function App() {
                   <button
                       className="primary-button"
                       onClick={abrirFormularioEmprestimo}
+                      type="button"
                   >
                     {mostrarFormulario ? 'Cancelar' : '+ Novo empréstimo'}
                   </button>
@@ -818,7 +1049,6 @@ function App() {
                             required
                         >
                           <option value="">Selecione um equipamento</option>
-
                           {equipamentosDisponiveisLista.map((equipamento) => (
                               <option key={equipamento.id} value={equipamento.id}>
                                 {equipamento.nome} - {equipamento.patrimonio}
@@ -836,7 +1066,6 @@ function App() {
                             required
                         >
                           <option value="">Selecione um colaborador</option>
-
                           {colaboradores.map((colaborador) => (
                               <option key={colaborador.id} value={colaborador.id}>
                                 {colaborador.nome} - {colaborador.matricula}
@@ -931,7 +1160,6 @@ function App() {
                           <th>Ação</th>
                         </tr>
                         </thead>
-
                         <tbody>
                         {emprestimosRecentes.map((emprestimo) => {
                           const situacao = obterSituacao(emprestimo)
@@ -949,9 +1177,7 @@ function App() {
                                       : '—'}
                                 </td>
                                 <td>
-                            <span
-                                className={`status-badge ${situacao.toLowerCase().replace(' ', '-')}`}
-                            >
+                            <span className={`status-badge ${situacao.toLowerCase().replace(' ', '-')}`}>
                               {situacao}
                             </span>
                                 </td>
