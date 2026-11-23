@@ -13,7 +13,8 @@ https://sistema-emprestimo-java.onrender.com
 https://github.com/rebeca-miguel/sistema-emprestimo-java
 
 **Link do vídeo:**
-https://drive.google.com/file/d/1NtkFHSGnaD2CyvbkgRxuWTVN422Ave0n/view?usp=drive_link
+https://drive.google.com/file/d/1w5sxbIsPnND17Kr-SkwgAHDfiOhN6rSf/view?usp=drive_link
+
 
 ## Funcionalidades
 
