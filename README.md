@@ -12,6 +12,9 @@ https://sistema-emprestimo-java.onrender.com
 **Repositório:**  
 https://github.com/rebeca-miguel/sistema-emprestimo-java
 
+**Link do vídeo:**
+https://drive.google.com/file/d/1NtkFHSGnaD2CyvbkgRxuWTVN422Ave0n/view?usp=drive_link
+
 ## Funcionalidades
 
 - **Dashboard:** visualização de indicadores e resumo das movimentações.
